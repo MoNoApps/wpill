@@ -15,6 +15,9 @@
     "monoapps",
     "mna"
   ],
+  "dependencies": {
+    "mpill": "*"
+  },
   "author": "Daniel Martinez",
   "license": "MIT",
   "bugs": {

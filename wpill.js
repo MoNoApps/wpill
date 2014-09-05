@@ -1,17 +1,43 @@
-var WPill = function(){};
+//Utils
+var MPill = require('mpill').MPill;
 
-WPill.prototype.Who = function(client_id, data) {
-  return this._extend({
-    client_id: client_id,
-  }, data);
+/**
+ * WPill is a watch tracker tool.
+ * @method WPill
+ * @param {} url, the url of the moongodb.
+ * @return
+ */
+var WPill = function(url){
+  this.users  = new MPill('users', url);
+  this.tracks = new MPill('tracks', url);
 };
 
-WPill.prototype.What = function(req, event, logs) {
+/**
+ * Who method allows to identify a person, client or customer.
+ * @method Who
+ * @param {} client_id
+ * @param {} data
+ * @return
+ */
+WPill.prototype.Who = function(client_id, data) {
+  var who = this._extend({client_id: client_id,}, data);
+  this.users.Insert(who, function(){console.log("saved track 'who'")});
+};
+
+/**
+ * What method allows to track an event.
+ * @method What
+ * @param {} req, the req object from express framewowk.
+ * @param {} event, the event name.
+ * @param {} data, aditional data.
+ * @return
+ */
+WPill.prototype.What = function(req, event, data) {
   if(!req){ return {};}
 
   var base = {
     'event': event,
-    host: req.host,
+    hostname: req.hostname,
     url:req.url,
     params: req.params,
     accepts: req.accepts(),
@@ -32,23 +58,47 @@ WPill.prototype.What = function(req, event, logs) {
     }
   };
 
-  return this._extend(base, logs);
+  var what = this._extend(base, data);
+  this.tracks.Insert(what, function(){console.log("saved track 'what'")});
 };
 
+/**
+ * Where method allows to indicate what is the website
+ * that originates the event.
+ * @method Where
+ * @param {} path, the uri used
+ * @param {} site, the site name or identifier
+ * @param {} what, the WPill.What object
+ * @return
+ */
 WPill.prototype.Where = function(path, site, what) {
-  return this._extend({
+  var where = this._extend({
     path: path,
     site: site
   }, what);
+
+  this.tracks.Insert(where, function(){console.log("saved track 'where'")});
 };
 
+/**
+ * When method indicates when the event was originated.
+ * @method When
+ * @param {} client_id
+ * @param {} what
+ * @return
+ */
 WPill.prototype.When = function(client_id, what) {
-  return this._extend({
+  var when = this._extend({
     client_id: client_id,
     time: Date.now()
   }, what);
+
+  this.tracks.Insert(when, function(){console.log("saved track 'when'")});
 };
 
+/**
+ *This function join two objects.
+ */
 WPill.prototype._extend = function(base, ext){
   if(ext){
     for(var i in ext){
