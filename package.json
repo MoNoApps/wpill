@@ -1,6 +1,6 @@
 {
   "name": "wpill",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "MoNoApps Watch Pill",
   "main": "wpill.js",
   "scripts": {

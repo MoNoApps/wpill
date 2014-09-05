@@ -12,11 +12,21 @@ mocha
 
 Usage
 ===
+Start database
+````shell
+mongod --dbpath ....../data/wpill
+````
+Next sample intercepts all request:
 ````js
-var wpill =  new WPill();
-log = .../your_table_or_collection
+var express = require('express');
+var app = express();
+
+//Utils
+var WPill = require('wpill').WPill;
+var wpill =  new WPill("mongodb://127.0.0.1/wpill")
+
 app.all('*', function(req, res, next){
-  log.save(tracer.Log(req, 'page_view', {bitcoin: 'eeeeeeiiiiiiiii'}));
+  wpill.What(req,'page_view');
   next();
 });
 
